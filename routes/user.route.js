@@ -1,11 +1,16 @@
 const express = require('express');
+var multer = require('multer')
 
-const db = require('../db');
+// const db = require('../db');
 const controller = require('../controllers/user.controller')
 const validate = require("../validate/user.validate")
+const authMiddleware = require('../middlewares/auth.middleware');
+
 const router = express.Router();
 
-const authMiddleware = require('../middlewares/auth.middleware')
+var upload = multer({ dest: './public/uploads/' })
+
+
 router.get('/', controller.index);
 
 router.get('/cookie', (req, res, next) => {
@@ -18,6 +23,9 @@ router.get('/create', controller.create);
 
 router.get('/:id', controller.get);
 
-router.post('/create', validate.postCreate, controller.postCreate);
+router.post('/create',
+    upload.single('avatar'),
+    validate.postCreate,
+    controller.postCreate);
 
 module.exports = router;
